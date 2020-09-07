@@ -5,10 +5,10 @@
 
 class Vec3 {
 
-    float x,y,z;
 
 public:
 
+    float x,y,z;
 
     Vec3(float x, float y, float z);
 
@@ -23,21 +23,25 @@ public:
     float length_squared() const;
 
 
-   
 
+    //TODO transfer overloads to outside of class definition
     Vec3 operator+(const Vec3& other) const;
 
     Vec3 operator-(const Vec3& other) const;
 
-    Vec3 operator*(float other) const;
 
     Vec3 operator*(const Vec3& other) const;
 
 
 
+    Vec3 operator*(float other) const;
+
+    Vec3 operator/(float other) const;
+
 };
 
 
+using Point3 = Vec3;
 
 
 
