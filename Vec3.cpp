@@ -39,3 +39,7 @@ float Vec3::dot(const Vec3 &a, const Vec3 &b) {
 Vec3 Vec3::operator/( float other) const {
     return *this* (1/other);
 }
+
+Vec3 Vec3::unit_vector(Vec3 V) {
+    return V/V.length();
+}

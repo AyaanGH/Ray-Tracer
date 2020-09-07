@@ -32,16 +32,17 @@ public:
 
     Vec3 operator*(const Vec3& other) const;
 
-
-
     Vec3 operator*(float other) const;
 
     Vec3 operator/(float other) const;
+
+    static Vec3 unit_vector(Vec3 V);
 
 };
 
 
 using Point3 = Vec3;
+using Colour = Vec3;
 
 
 

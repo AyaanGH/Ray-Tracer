@@ -6,10 +6,11 @@
 
 class Ray {
 
-    Point3 origin;
-    Vec3 direction;
 
 public:
+    Vec3 direction;
+    Point3 origin;
+
     Ray(const Point3 &origin, const Vec3 &direction);
 
     //Get point along vector given t
