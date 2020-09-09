@@ -8,19 +8,19 @@ class Vec3 {
 
 public:
 
-    float x,y,z;
+    double x,y,z;
 
-    Vec3(float x, float y, float z);
+    Vec3(double x, double y, double z);
 
-    float magnitude();
+    double magnitude();
 
-    float dot(const Vec3 &a , const  Vec3 &b);
+    static double dot(const Vec3 &a , const  Vec3 &b);
 
-    float cross();
+    double cross();
 
-    float length();
+    double length();
 
-    float length_squared() const;
+    double length_squared() const;
 
 
 
@@ -32,9 +32,9 @@ public:
 
     Vec3 operator*(const Vec3& other) const;
 
-    Vec3 operator*(float other) const;
+    Vec3 operator*(double other) const;
 
-    Vec3 operator/(float other) const;
+    Vec3 operator/(double other) const;
 
     static Vec3 unit_vector(Vec3 V);
 
