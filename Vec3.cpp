@@ -28,7 +28,7 @@ double Vec3::length_squared() const {
     return std::pow(x,2) + std::pow(y,2) + std::pow(z,2);
 }
 
-double Vec3::length() {
+double Vec3::length() const {
     return std::sqrt(length_squared());
 }
 

@@ -18,7 +18,7 @@ public:
 
     double cross();
 
-    double length();
+    double length() const;
 
     double length_squared() const;
 

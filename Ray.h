@@ -15,7 +15,7 @@ public:
 
     //Get point along vector given t
 
-    Point3 point_on_ray(double distance);
+    Point3 point_on_ray(double distance) const;
 
 };
 
