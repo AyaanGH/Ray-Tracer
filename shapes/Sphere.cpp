@@ -24,7 +24,10 @@ bool Sphere::intersect(const Ray &r, double t_min, double t_max, hit_record &rec
         {
             record.t = small_root;
             record.point = r.point_on_ray(small_root);
-            record.normal = (record.point-sphere_centre) / radius;
+//            record.normal = (record.point-sphere_centre) / radius;
+
+            Vec3 outward_normal = (record.point - sphere_centre) / radius;
+            record.set_face_normal(r, outward_normal);
             return true;
 
         }
@@ -32,12 +35,14 @@ bool Sphere::intersect(const Ray &r, double t_min, double t_max, hit_record &rec
 
         double large_root =  (-b + std::sqrt(discriminant)) / (2.0 * a);
 
-        if(large_root < t_max && large_root > t_min)
-        {
+        if(large_root < t_max && large_root > t_min) {
             record.t = large_root;
             record.point = r.point_on_ray(large_root);
-            record.normal = (record.point-sphere_centre) / radius;
+//            record.normal = (record.point-sphere_centre) / radius;
+            Vec3 outward_normal = (record.point - sphere_centre) / radius;
+            record.set_face_normal(r, outward_normal);
             return true;
+
 
         }
     }

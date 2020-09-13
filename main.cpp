@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "Vec3.h"
-#include "Ray.h"
+#include "utility/Vec3.h"
+#include "utility/Ray.h"
 
 
 void write_colour(std::ostream &out, Colour pixel_colour) {

@@ -4,4 +4,4 @@ project(Ray_tracer)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(Ray_tracer
-        main.cpp Vec3.cpp Vec3.h Ray.cpp Ray.h Entity.cpp Entity.h Sphere.cpp Sphere.h)
+        main.cpp utility/Vec3.cpp utility/Vec3.h utility/Ray.cpp utility/Ray.h shapes/Entity.cpp shapes/Entity.h shapes/Sphere.cpp shapes/Sphere.h)

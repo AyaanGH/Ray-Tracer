@@ -3,7 +3,7 @@
 
 
 #include "Entity.h"
-#include "Vec3.h"
+#include "../utility/Vec3.h"
 
 class Sphere: public Entity {
 
