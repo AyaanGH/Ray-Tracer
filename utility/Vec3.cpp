@@ -43,3 +43,13 @@ Vec3 Vec3::operator/( double other) const {
 Vec3 Vec3::unit_vector(Vec3 V) {
     return V/V.length();
 }
+
+Vec3::Vec3() {
+    x= 0;
+    y=0;
+    z=0;
+
+}
+
+
+

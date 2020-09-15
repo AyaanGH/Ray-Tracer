@@ -48,4 +48,6 @@ bool Sphere::intersect(const Ray &r, double t_min, double t_max, hit_record &rec
     }
 
 
+    //Possible place of bug
+    return false;
 }

@@ -12,6 +12,8 @@ public:
 
     Vec3(double x, double y, double z);
 
+    Vec3();
+
     double magnitude();
 
     static double dot(const Vec3 &a , const  Vec3 &b);

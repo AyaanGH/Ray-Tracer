@@ -5,11 +5,15 @@
 
 
 struct hit_record {
+
+
+
+
     Point3 point;
     Vec3 normal;
-    double t;
+    double t{};
 
-    bool front_face;
+    bool front_face{};
 
     void set_face_normal(const Ray &r, const Vec3 &outward_normal) {
         front_face = Vec3::dot(r.direction, outward_normal) < 0;
