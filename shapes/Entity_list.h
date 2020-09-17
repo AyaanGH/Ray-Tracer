@@ -14,6 +14,8 @@
 class Entity_list: public Entity {
 public:
 
+    Entity_list();
+
     std::vector<std::shared_ptr<Entity>> objects;
 
     Entity_list(std::shared_ptr<Entity> object);

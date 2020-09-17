@@ -36,3 +36,7 @@ bool Entity_list::intersect(const Ray &r, double t_min, double t_max, hit_record
 
 
 }
+
+Entity_list::Entity_list() {
+
+}
