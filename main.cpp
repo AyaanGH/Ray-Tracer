@@ -52,16 +52,6 @@ Colour ray_colour(const Ray &r, const Entity& world)
 
 
 
-
-//    if (t > 0.0) {
-//        Point3 normal = Vec3::unit_vector(r.point_on_ray(t) - Vec3(0, 0, -1));
-//
-//        return (Colour(normal.x + 1, normal.y + 1, normal.z + 1) * 0.5);
-//    }
-//
-//    Vec3 unit_direction = Vec3::unit_vector(r.direction);
-//    t = 0.5 * (unit_direction.y + 1.0);
-//    return Colour(1.0, 1.0, 1.0) * (1.0 - t) + Colour(0.5, 0.7, 1.0) * t;
 }
 
 
@@ -94,23 +84,19 @@ int main() {
     world.add(std::make_shared<Sphere>(Point3(0,0,-1),0.5));
     world.add(std::make_shared<Sphere>(Point3(0,-100.5,-1),100));
 
-
-
-
-
-
-
-
+    
     //Output PPM file format
     std::ofstream image("raytrace.ppm");
 
 
     //Required metadata for the .ppm image format
     image << "P3\n" << image_width << " " << image_height << "\n255\n";
-    for (int y = 0; y < image_height; ++y) {
+
+
+
+    for (int y = image_height;  y >= 0; --y) {
         std::cerr << "\rLines rendered: " << y << ' ' << std::flush;
         for (int x = 0; x < image_width; ++x) {
-
 
             double percent_x = double(x) / (image_width - 1);
             double percent_y = double(y) / (image_height - 1);
