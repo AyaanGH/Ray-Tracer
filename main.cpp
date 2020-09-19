@@ -5,13 +5,24 @@
 #include "shapes/Entity_list.h"
 #include "shapes/Sphere.h"
 #include "utility/utility.h"
+#include "utility/Camera.h"
 
 
-void write_colour(std::ostream &out, Colour pixel_colour) {
-    // Write the translated [0,255] value of each color component.
-    out << static_cast<int>(255.999 * pixel_colour.x) << ' '
-        << static_cast<int>(255.999 * pixel_colour.y) << ' '
-        << static_cast<int>(255.999 * pixel_colour.z ) << '\n';
+void write_colour(std::ostream &out, Colour pixel_colour, int samples_per_pixel) {
+
+    double r = pixel_colour.x;
+    double g = pixel_colour.y;
+    double b = pixel_colour.z;
+
+    double scale = 1.0 / samples_per_pixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
+
+    out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
 }
 
 
@@ -63,6 +74,7 @@ int main() {
     const double aspect_ratio = 16.0 / 9.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int samples_per_pixel = 100;
 
     //Camera metadata
     Point3 camera_origin(0, 0, 0);
@@ -79,10 +91,16 @@ int main() {
 
     //Scene
 
+
+    Camera camera;
+
     Entity_list world;
 
     world.add(std::make_shared<Sphere>(Point3(0,0,-1),0.5));
     world.add(std::make_shared<Sphere>(Point3(0,-100.5,-1),100));
+
+
+
 
 
     //Output PPM file format
@@ -98,13 +116,31 @@ int main() {
         std::cerr << "\rLines rendered: " << y << ' ' << std::flush;
         for (int x = 0; x < image_width; ++x) {
 
-            double percent_x = double(x) / (image_width - 1);
-            double percent_y = double(y) / (image_height - 1);
+            Colour pixel_colour(0,0,0);
 
-            Ray camera_ray(camera_origin, lower_left_corner + horizontal_vector * percent_x +
-                                          vertical_vector * percent_y - camera_origin);
-            Colour pixel_colour = ray_colour(camera_ray,world);
-            write_colour(image, pixel_colour);
+            for (int samples =0; samples < samples_per_pixel ; ++samples)
+            {
+                double  percent_x = (x + random_double()) / (image_width -1);
+                double percent_y = (y + random_double()) / (image_height-1);
+
+                Ray r = camera.get_ray(percent_x,percent_y);
+                pixel_colour = pixel_colour + ray_colour(r, world);
+
+
+
+            }
+
+            write_colour(image, pixel_colour, samples_per_pixel);
+
+
+
+//            double percent_x = double(x) / (image_width - 1);
+//            double percent_y = double(y) / (image_height - 1);
+//
+//            Ray camera_ray(camera_origin, lower_left_corner + horizontal_vector * percent_x +
+//                                          vertical_vector * percent_y - camera_origin);
+//            Colour pixel_colour = ray_colour(camera_ray,world);
+//            write_colour(image, pixel_colour);
 
 
         }
