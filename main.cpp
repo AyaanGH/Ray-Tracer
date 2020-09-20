@@ -53,7 +53,10 @@ Colour ray_colour(const Ray &r, const Entity& world)
 
     if(world.intersect(r,0,infinity,record))
     {
-        return  (record.normal + Colour(1,1,1)) *0.5;
+
+        Point3 target = record.point + record.normal + Vec3::random_in_unit_sphere();
+
+        return ray_colour(Ray(record.point,target-record.point),world) * 0.5;
     }
 
 
@@ -132,15 +135,6 @@ int main() {
 
             write_colour(image, pixel_colour, samples_per_pixel);
 
-
-
-//            double percent_x = double(x) / (image_width - 1);
-//            double percent_y = double(y) / (image_height - 1);
-//
-//            Ray camera_ray(camera_origin, lower_left_corner + horizontal_vector * percent_x +
-//                                          vertical_vector * percent_y - camera_origin);
-//            Colour pixel_colour = ray_colour(camera_ray,world);
-//            write_colour(image, pixel_colour);
 
 
         }

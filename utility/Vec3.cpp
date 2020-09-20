@@ -1,5 +1,6 @@
 #include "Vec3.h"
 #include "cmath"
+#include "utility.h"
 
 Vec3::Vec3(double x, double y, double z) : x(x), y(y), z(z) {}
 
@@ -49,6 +50,30 @@ Vec3::Vec3() {
     y=0;
     z=0;
 
+}
+
+Vec3 Vec3::random() {
+    return Vec3(random_double(),random_double(),random_double());
+}
+
+Vec3 Vec3::random(double min, double max) {
+    return Vec3(random(min,max),random(min,max),random(min,max));
+}
+
+Vec3 Vec3::random_in_unit_sphere() {
+    while (true)
+    {
+        Vec3 p = Vec3::random(-1, 1);
+        if (p.length_squared() >=1)
+        {
+            continue;
+
+        }
+
+        return p;
+
+
+    }
 }
 
 

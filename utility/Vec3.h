@@ -18,6 +18,12 @@ public:
 
     static double dot(const Vec3 &a , const  Vec3 &b);
 
+    static Vec3 random();
+
+    static Vec3 random(double min, double max);
+
+    static Vec3 random_in_unit_sphere();
+
     double cross();
 
     double length() const;
