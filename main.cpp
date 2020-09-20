@@ -46,9 +46,10 @@ double hit_sphere(const Point3 sphere_centre, double radius, const Ray &r) {
 
 }
 
-Colour ray_colour(const Ray &r, const Entity& world)
+Colour ray_colour(const Ray &r, const Entity& world,int depth)
 {
-
+    if (depth <= 0)
+        return Colour(0,0,0);
     hit_record record;
 
     if(world.intersect(r,0,infinity,record))
@@ -56,7 +57,7 @@ Colour ray_colour(const Ray &r, const Entity& world)
 
         Point3 target = record.point + record.normal + Vec3::random_in_unit_sphere();
 
-        return ray_colour(Ray(record.point,target-record.point),world) * 0.5;
+        return ray_colour(Ray(record.point,target-record.point),world,depth-1) * 0.5;
     }
 
 
@@ -78,6 +79,7 @@ int main() {
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
+    const int max_depth = 50;
 
     //Camera metadata
     Point3 camera_origin(0, 0, 0);
@@ -116,7 +118,7 @@ int main() {
 
 
     for (int y = image_height;  y >= 0; --y) {
-        std::cerr << "\rLines rendered: " << y << ' ' << std::flush;
+        std::cerr << "\rLines left to render: " << y << ' ' << std::flush;
         for (int x = 0; x < image_width; ++x) {
 
             Colour pixel_colour(0,0,0);
@@ -127,7 +129,7 @@ int main() {
                 double percent_y = (y + random_double()) / (image_height-1);
 
                 Ray r = camera.get_ray(percent_x,percent_y);
-                pixel_colour = pixel_colour + ray_colour(r, world);
+                pixel_colour = pixel_colour + ray_colour(r, world,max_depth);
 
 
 

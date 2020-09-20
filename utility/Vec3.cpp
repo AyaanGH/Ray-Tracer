@@ -52,18 +52,18 @@ Vec3::Vec3() {
 
 }
 
-Vec3 Vec3::random() {
+Vec3 Vec3::vec_random() {
     return Vec3(random_double(),random_double(),random_double());
 }
 
-Vec3 Vec3::random(double min, double max) {
-    return Vec3(random(min,max),random(min,max),random(min,max));
+Vec3 Vec3::vec_random(double min, double max) {
+    return Vec3(random_double(min,max),random_double(min,max),random_double(min,max));
 }
 
 Vec3 Vec3::random_in_unit_sphere() {
     while (true)
     {
-        Vec3 p = Vec3::random(-1, 1);
+        Vec3 p = Vec3::vec_random(-1, 1);
         if (p.length_squared() >=1)
         {
             continue;
