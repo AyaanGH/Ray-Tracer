@@ -9,7 +9,6 @@ class Camera {
 
 public:
 
-
     //Image metadata
    Camera() {
         const double aspect_ratio = 16.0 / 9.0;

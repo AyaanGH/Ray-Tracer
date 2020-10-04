@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <chrono>
 #include "utility/Vec3.h"
 #include "utility/Ray.h"
 #include "shapes/Entity_list.h"
@@ -15,9 +16,10 @@ void write_colour(std::ostream &out, Colour pixel_colour, int samples_per_pixel)
     double b = pixel_colour.z;
 
     double scale = 1.0 / samples_per_pixel;
-    r *= scale;
-    g *= scale;
-    b *= scale;
+
+    r = sqrt(scale * r);
+    g = sqrt(scale * g);
+    b = sqrt(scale * b);
 
 
     out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
@@ -46,25 +48,22 @@ double hit_sphere(const Point3 sphere_centre, double radius, const Ray &r) {
 
 }
 
-Colour ray_colour(const Ray &r, const Entity& world,int depth)
-{
+Colour ray_colour(const Ray &r, const Entity &world, int depth) {
     if (depth <= 0)
-        return Colour(0,0,0);
+        return Colour(0, 0, 0);
     hit_record record;
 
-    if(world.intersect(r,0,infinity,record))
-    {
+    if (world.intersect(r, 0.001, infinity, record)) {
 
         Point3 target = record.point + record.normal + Vec3::random_in_unit_sphere();
 
-        return ray_colour(Ray(record.point,target-record.point),world,depth-1) * 0.5;
+        return ray_colour(Ray(record.point, target - record.point), world, depth - 1) * 0.5;
     }
 
 
     Vec3 unit_direction = Vec3::unit_vector(r.direction);
-    double t = 0.5*(unit_direction.y + 1.0);
-    return Colour(1.0, 1.0, 1.0) * (1.0-t) + Colour(0.5, 0.7, 1.0) *t;
-
+    double t = 0.5 * (unit_direction.y + 1.0);
+    return Colour(1.0, 1.0, 1.0) * (1.0 - t) + Colour(0.5, 0.7, 1.0) * t;
 
 
 }
@@ -72,9 +71,10 @@ Colour ray_colour(const Ray &r, const Entity& world,int depth)
 
 int main() {
 
+    //Measure rendering time
+    auto t1 = std::chrono::high_resolution_clock::now();
 
     //Image metadata
-
     const double aspect_ratio = 16.0 / 9.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
@@ -95,53 +95,43 @@ int main() {
 
 
     //Scene
-
-
     Camera camera;
-
     Entity_list world;
 
-    world.add(std::make_shared<Sphere>(Point3(0,0,-1),0.5));
-    world.add(std::make_shared<Sphere>(Point3(0,-100.5,-1),100));
-
-
-
-
+    world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5));
+    world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100));
 
     //Output PPM file format
     std::ofstream image("raytrace.ppm");
-
-
+    
     //Required metadata for the .ppm image format
     image << "P3\n" << image_width << " " << image_height << "\n255\n";
 
 
-
-    for (int y = image_height;  y >= 0; --y) {
+    for (int y = image_height; y >= 0; --y) {
         std::cerr << "\rLines left to render: " << y << ' ' << std::flush;
         for (int x = 0; x < image_width; ++x) {
 
-            Colour pixel_colour(0,0,0);
+            Colour pixel_colour(0, 0, 0);
 
-            for (int samples =0; samples < samples_per_pixel ; ++samples)
-            {
-                double  percent_x = (x + random_double()) / (image_width -1);
-                double percent_y = (y + random_double()) / (image_height-1);
+            for (int samples = 0; samples < samples_per_pixel; ++samples) {
+                double percent_x = (x + random_double()) / (image_width - 1);
+                double percent_y = (y + random_double()) / (image_height - 1);
 
-                Ray r = camera.get_ray(percent_x,percent_y);
-                pixel_colour = pixel_colour + ray_colour(r, world,max_depth);
-
-
+                Ray r = camera.get_ray(percent_x, percent_y);
+                pixel_colour = pixel_colour + ray_colour(r, world, max_depth);
 
             }
 
             write_colour(image, pixel_colour, samples_per_pixel);
-
-
-
         }
-
     }
+
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+    std::cout << "\n" << duration / 1e6 << " seconds" << "\n" << "Samples: " << samples_per_pixel << "\n"
+              << "Resolution: " << image_width << " * " << image_height << std::endl;
 
 
     return 0;
