@@ -10,18 +10,17 @@
 
 class Thread_pool {
 
-public:
+private:
     std::mutex token;
     std::condition_variable condition;
     std::queue<std::function<void()>> queue;
     std::vector<std::thread> pool;
+    [[noreturn]] void wait_for_job();
 
-    bool terminate_flag;
+public:
 
 
     void add_job(std::function<void()> job);
-
-    [[noreturn]] void wait_for_job();
 
     void terminate_pool();
 
@@ -30,7 +29,9 @@ public:
     virtual ~Thread_pool();
 
 
+
 };
+static bool terminate_flag = false;
 
 
 #endif

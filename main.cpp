@@ -7,7 +7,11 @@
 #include "shapes/Sphere.h"
 #include "utility/utility.h"
 #include "utility/Camera.h"
+#include "utility/Thread_pool.h"
 
+
+void render_row(const int image_width, const int image_height, const int samples_per_pixel, const int max_depth,
+                Camera &camera, const Entity_list &world, int y, Colour *buffer);
 
 void write_colour(std::ostream &out, Colour pixel_colour, int samples_per_pixel) {
 
@@ -103,29 +107,53 @@ int main() {
 
     //Output PPM file format
     std::ofstream image("raytrace.ppm");
-    
+
     //Required metadata for the .ppm image format
     image << "P3\n" << image_width << " " << image_height << "\n255\n";
 
+    //Buffer
+    Colour *buffer = new Colour[image_height * image_width];
 
-    for (int y = image_height; y >= 0; --y) {
+
+
+    //Thread Pool
+
+    Thread_pool thread_group;
+
+
+    for (int y = image_height; y >= 1; --y) {
         std::cerr << "\rLines left to render: " << y << ' ' << std::flush;
+
+
+        thread_group.add_job(
+                std::bind(&render_row, image_width, image_height, samples_per_pixel, max_depth, camera, world, y,
+                          buffer));
+
+//        std::cout << "Job ID: " << y << "\n";
+    }
+
+
+    //TODO Fix thread pooling termination
+//    thread_group.terminate_pool();
+
+
+
+//    std::cout << "thread pool terminated";
+    for(int y = image_height; y>=1; --y)
+    {
+
         for (int x = 0; x < image_width; ++x) {
 
-            Colour pixel_colour(0, 0, 0);
-
-            for (int samples = 0; samples < samples_per_pixel; ++samples) {
-                double percent_x = (x + random_double()) / (image_width - 1);
-                double percent_y = (y + random_double()) / (image_height - 1);
-
-                Ray r = camera.get_ray(percent_x, percent_y);
-                pixel_colour = pixel_colour + ray_colour(r, world, max_depth);
+            Colour pixel_colour = buffer[y*image_width - x];
+            write_colour(image,pixel_colour,samples_per_pixel);
 
             }
 
-            write_colour(image, pixel_colour, samples_per_pixel);
-        }
     }
+
+
+
+    delete[] buffer;
 
     auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
@@ -135,5 +163,27 @@ int main() {
 
 
     return 0;
+}
+
+void render_row(const int image_width, const int image_height, const int samples_per_pixel, const int max_depth,
+                Camera &camera, const Entity_list &world, int y, Colour *buffer) {
+    for (int x = 0; x < image_width; ++x) {
+
+        Colour pixel_colour(0, 0, 0);
+
+        for (int samples = 0; samples < samples_per_pixel; ++samples) {
+            double percent_x = (x + random_double()) / (image_width - 1);
+            double percent_y = (y + random_double()) / (image_height - 1);
+
+            Ray r = camera.get_ray(percent_x, percent_y);
+            pixel_colour = pixel_colour + ray_colour(r, world, max_depth);
+
+        }
+
+//            write_colour(image, pixel_colour, samples_per_pixel);
+        //Write to buffer
+        buffer[y * image_width - x] = pixel_colour;
+
+    }
 }
 
